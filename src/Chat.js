@@ -8,14 +8,15 @@ function Chat() {
   const [seed, setSeed] = useState("");
   const [input, setInput] = useState("");
 
-  console.log(input);
 
   useEffect(() => {
     setSeed(Math.floor(Math.random() * 5000));
   }, []);
 
   const sendMessage = (e) => {
-
+    e.preventDefault();
+    console.log("you typed >", input)
+    setInput("")
   }
 
   return (
