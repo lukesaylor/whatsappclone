@@ -52,4 +52,9 @@
 .sidebar_chats {
     background-color: white;
     overflow: scroll;
+
 }
+
+.sidebar_chats::-webkit-scrollbar {
+    display: none;
+  }
