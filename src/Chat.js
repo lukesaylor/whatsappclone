@@ -1,30 +1,48 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import "./Chat.css";
 import { Avatar, IconButton } from "@material-ui/core";
-import { AttachFile, MoreVert, SearchOutlined, InsertEmoticon, Mic } from "@material-ui/icons";
-
+import {
+  AttachFile,
+  MoreVert,
+  SearchOutlined,
+  InsertEmoticon,
+  Mic,
+} from "@material-ui/icons";
+import db from "./firebase";
 
 function Chat() {
   const [seed, setSeed] = useState("");
   const [input, setInput] = useState("");
+  const { roomId } = useParams();
+  const [roomName, setRoomName] = useState("");
 
+  //change seed to be set by roomId in the future to maintain the same avatar for each room 
+
+  useEffect(() => {
+    if (roomId) {
+      db.collection("rooms")
+        .doc(roomId)
+        .onSnapshot((snapshot) => setRoomName(snapshot.data().name));
+    }
+  }, [roomId]);
 
   useEffect(() => {
     setSeed(Math.floor(Math.random() * 5000));
-  }, []);
+  }, [roomId]);
 
   const sendMessage = (e) => {
     e.preventDefault();
-    console.log("you typed >", input)
-    setInput("")
-  }
+    console.log("you typed >", input);
+    setInput("");
+  };
 
   return (
     <div className="chat">
       <div className="chat_header">
         <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`} />
         <div className="chat_headerInfo">
-          <h3>Room Name</h3>
+          <h3>{roomName}</h3>
           <p>Last seen at ...</p>
         </div>
         <div className="chat_headerRight">
@@ -40,19 +58,26 @@ function Chat() {
         </div>
       </div>
       <div className="chat_body">
-        <p className={`chat_message ${true && 'chat_reciever'}`}>
+        <p className={`chat_message ${true && "chat_reciever"}`}>
           <span className="chat_name">Luke</span>
           hey guys
           <span className="chat_timestamp">3:50</span>
         </p>
       </div>
       <div className="chat_footer">
-        <InsertEmoticon/>
+        <InsertEmoticon />
         <form>
-          <input value={input} onChange={e => setInput(e.target.value)} placeholder="Type a Message" type="text"/>
-          <button onClick={sendMessage} type="submit">Send a Message</button>
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Type a Message"
+            type="text"
+          />
+          <button onClick={sendMessage} type="submit">
+            Send a Message
+          </button>
         </form>
-        <Mic/>
+        <Mic />
       </div>
     </div>
   );
